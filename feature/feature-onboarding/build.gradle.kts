@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":core:core-model"))
     implementation(project(":core:core-network"))
     implementation(project(":core:core-security"))
+    implementation(libs.okhttp.core)
     implementation(project(":core:core-ui"))
     implementation(project(":core:core-voice"))
 

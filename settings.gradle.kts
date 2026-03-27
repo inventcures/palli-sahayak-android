@@ -12,7 +12,8 @@ pluginManagement {
     }
 }
 
-dependencyResolution {
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -29,14 +30,14 @@ include(":core:core-network")
 include(":core:core-security")
 include(":core:core-ui")
 include(":core:core-voice")
+include(":core:core-sync")
+include(":core:core-fhir")
+include(":core:core-evaluation")
 include(":feature:feature-onboarding")
 include(":feature:feature-query")
 include(":feature:feature-home")
 include(":feature:feature-medication")
 include(":feature:feature-patient")
 include(":feature:feature-careteam")
-include(":core:core-sync")
-include(":core:core-fhir")
-include(":core:core-evaluation")
 include(":feature:feature-vignette")
 include(":feature:feature-settings")

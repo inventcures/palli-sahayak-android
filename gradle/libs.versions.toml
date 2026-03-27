@@ -10,7 +10,7 @@ coil = "2.7.0"
 work = "2.9.1"
 navigation = "2.8.4"
 moshi = "1.15.1"
-sqlcipher = "4.5.6"
+sqlcipher = "4.5.4"
 security-crypto = "1.1.0-alpha06"
 biometric = "1.2.0-alpha05"
 datastore = "1.1.1"
@@ -35,6 +35,7 @@ compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 # AndroidX Core
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
