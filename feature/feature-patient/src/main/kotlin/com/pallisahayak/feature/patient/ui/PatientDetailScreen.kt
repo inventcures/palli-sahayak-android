@@ -7,9 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,6 +28,9 @@ fun PatientDetailScreen(
     val patient by viewModel.patient.collectAsState()
     val observations by viewModel.observations.collectAsState()
     val careTeam by viewModel.careTeam.collectAsState()
+    val insights by viewModel.insights.collectAsState()
+    val insightsLoading by viewModel.insightsLoading.collectAsState()
+    var selectedTab by remember { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -94,16 +95,114 @@ fun PatientDetailScreen(
                 }
             }
 
+            // Tab selector: Timeline | Insights
             item {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Observation Timeline (${observations.size})", style = MaterialTheme.typography.headlineSmall)
+                TabRow(selectedTabIndex = selectedTab) {
+                    Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }) {
+                        Text(
+                            "Timeline (${observations.size})",
+                            modifier = Modifier.padding(12.dp),
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
+                    Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }) {
+                        Text(
+                            "Insights (${insights.size})",
+                            modifier = Modifier.padding(12.dp),
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
+                }
             }
 
-            items(observations, key = { it.observationId }) { obs ->
-                ObservationCard(obs)
+            when (selectedTab) {
+                0 -> {
+                    items(observations, key = { it.observationId }) { obs ->
+                        ObservationCard(obs)
+                    }
+                }
+                1 -> {
+                    if (insightsLoading) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                    } else if (insights.isEmpty()) {
+                        item {
+                            Card(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = "No consolidated insights yet. Insights are generated as the system analyzes observation patterns over time.",
+                                    modifier = Modifier.padding(16.dp),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    } else {
+                        items(insights, key = { it.id }) { insight ->
+                            InsightCard(insight)
+                        }
+                    }
+                }
             }
 
             item { Spacer(modifier = Modifier.height(80.dp)) }
+        }
+    }
+}
+
+@Composable
+private fun InsightCard(insight: com.pallisahayak.feature.patient.ConsolidatedInsight) {
+    val typeColor = when (insight.insightType) {
+        "trend" -> PrimaryGreen
+        "correlation" -> SecondaryBlue
+        "risk" -> com.pallisahayak.core.ui.theme.EvidenceD
+        else -> PrimaryGreen
+    }
+    val typeLabel = when (insight.insightType) {
+        "trend" -> "Trend"
+        "correlation" -> "Correlation"
+        "risk" -> "Risk Alert"
+        else -> insight.insightType.replaceFirstChar { it.uppercase() }
+    }
+    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Surface(
+                    color = typeColor.copy(alpha = 0.15f),
+                    shape = MaterialTheme.shapes.small,
+                ) {
+                    Text(
+                        text = typeLabel,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = typeColor,
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = dateFormat.format(Date(insight.createdAt)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = insight.insightText,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            if (insight.sourceMemoryIds.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Based on ${insight.sourceMemoryIds.size} observations",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

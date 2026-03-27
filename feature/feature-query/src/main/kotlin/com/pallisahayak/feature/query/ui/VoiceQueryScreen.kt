@@ -15,6 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -178,7 +180,31 @@ fun VoiceQueryScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Feedback buttons (feeds HyperAgent meta-evaluation)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text("Was this helpful?", style = MaterialTheme.typography.labelMedium)
+                            IconButton(onClick = { viewModel.submitFeedback(positive = true) }) {
+                                Icon(
+                                    Icons.Default.ThumbUp,
+                                    contentDescription = "Helpful",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                            IconButton(onClick = { viewModel.submitFeedback(positive = false) }) {
+                                Icon(
+                                    Icons.Default.ThumbDown,
+                                    contentDescription = "Not helpful",
+                                    tint = MaterialTheme.colorScheme.error,
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
                         OutlinedButton(onClick = { viewModel.clearResult() }) {
                             Text("Ask another question")
                         }

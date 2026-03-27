@@ -73,4 +73,16 @@ interface PalliSahayakApiService {
 
     @GET("api/mobile/v1/fhir/export/{patientId}")
     suspend fun exportFhir(@Path("patientId") patientId: String): FhirExportResponse
+
+    @GET("api/mobile/v1/patient/{patientId}/insights")
+    suspend fun getPatientInsights(@Path("patientId") patientId: String): Map<String, Any?>
+
+    @POST("api/mobile/v1/patient/{patientId}/query-memory")
+    suspend fun queryPatientMemory(
+        @Path("patientId") patientId: String,
+        @Body request: Map<String, String>,
+    ): Map<String, Any?>
+
+    @POST("api/mobile/v1/feedback")
+    suspend fun submitFeedback(@Body feedback: Map<String, Any?>): Map<String, String>
 }
