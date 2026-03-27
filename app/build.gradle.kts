@@ -79,6 +79,10 @@ android {
 
 dependencies {
     implementation(project(":core:core-common"))
+    implementation(project(":core:core-voice"))
+    implementation(project(":feature:feature-onboarding"))
+    implementation(project(":feature:feature-query"))
+    implementation(project(":feature:feature-home"))
     implementation(project(":core:core-model"))
     implementation(project(":core:core-data"))
     implementation(project(":core:core-network"))
